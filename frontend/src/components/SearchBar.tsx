@@ -3,17 +3,20 @@ import styled from "@emotion/styled";
 import { theme } from "../theme";
 
 const SearchForm = styled.form`
+  display: inline-flex;
+  align-items: center;
   width: 100%;
 `;
 
 const SearchInputWrapper = styled.div`
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  width: 100%;
+  padding: 4px;
+  justify-content: space-between;
   background: ${theme.colors.surface};
   border: 1.5px solid ${theme.colors.borderStrong};
   border-radius: ${theme.radius.lg};
-  padding: 6px 6px 6px 18px;
-  gap: 8px;
   box-shadow: ${theme.shadow.md};
   transition: border-color ${theme.transition}, box-shadow ${theme.transition};
 
@@ -23,15 +26,8 @@ const SearchInputWrapper = styled.div`
   }
 `;
 
-const SearchIcon = styled.span`
-  font-size: 1.1rem;
-  color: ${theme.colors.inkFaint};
-  flex-shrink: 0;
-  line-height: 1;
-`;
-
 const SearchInput = styled.input`
-  flex: 1;
+  
   border: none;
   outline: none;
   font-family: ${theme.font.body};
@@ -39,7 +35,7 @@ const SearchInput = styled.input`
   font-weight: 400;
   color: ${theme.colors.ink};
   background: transparent;
-  padding: 10px 0;
+  padding-left: 10px;
 
   &::placeholder {
     color: ${theme.colors.inkFaint};
@@ -55,20 +51,18 @@ const SearchButton = styled.button`
   color: white;
   border: none;
   border-radius: 4px;
-  padding: 11px 22px;
+  padding: 10px 20px;
   font-family: ${theme.font.body};
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  flex-shrink: 0;
+  transform: translateX(-5px);
   transition: background ${theme.transition}, transform ${theme.transition};
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
 
   &:hover:not(:disabled) {
     background: ${theme.colors.accentHover};
-    transform: translateY(-1px);
   }
 
   &:active:not(:disabled) {
@@ -114,7 +108,7 @@ export function SearchBar({ onSearch, loading }: Props) {
   return (
     <SearchForm onSubmit={handleSubmit}>
       <SearchInputWrapper>
-        <SearchIcon>⌖</SearchIcon>
+       
         <SearchInput
           type="text"
           placeholder="Enter a city or town…"
