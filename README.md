@@ -52,18 +52,14 @@ travelcast/
     package.json
   package.json ← root orchestrator
 ```
-vite.config.js forwards /graphql to localhost:4000 and the Apollo Client in React just points at /graphql (same origin).
+vite.config.js forwards /graphql to localhost:4000 and the Apollo Client in React points at /graphql (same origin).
 
 - No CORS headers needed on the frontend
 - No hardcoded localhost:4000 URLs in the React components.
 
 ### *GraphQL over REST:*
 
-In a traditional REST architecture, the Open-Meteo API returns a massive payload containing dozens of weather variables. By using GraphQL as an orchestration layer, our frontend defines a fragment for exactly what the scoring engine needs (e.g., windSpeed, uvIndex). This reduces the payload size and prevents 'over-fetching' data that never reaches the UI.
-
-If we needed to fetch a city's coordinates and then its weather, REST might require a waterfall of requests. GraphQL allows us to batch these dependencies. I can resolve the Geocoding and the Forecast in a single round-trip, significantly reducing the 'Time to Interactive' for the user.
-
-Using Apollo Client provides an out-of-the-box normalized cache. This means once a user views the '7-day forecast,' switching between specific days is instantaneous. We don't have to write manual useEffect logic to store data in a global store; Apollo treats the cache as a single source of truth.
+In a traditional REST architecture, the Open-Meteo API returns a massive payload containing dozens of weather variables. By using GraphQL as an orchestration layer, the frontend defines a fragment for exactly what the scoring engine needs (e.g., windSpeed, uvIndex). This reduces the payload size and prevents 'over-fetching' data that never reaches the UI.
 
 ## Core Requirements Met
 ```
@@ -127,4 +123,4 @@ The Indoor score is designed to be the Inverse of the Outdoor score: The "Motiva
 
 **Smart Caching:** To prevent the API from hitting rate limits during testing and to make the UI feel "instant." I built a custom cache that stores weather results in memory. It rounds coordinates to keep searches consistent and automatically clears itself at midnight so the data stays fresh for the new day.
 
-**Mobile Responsive:** The UI responds to a device with of 660px and lower.
+**Mobile Responsive:** The UI responds to a device width of 660px and lower.
