@@ -5,7 +5,7 @@ import { apiClient, cache, GEOCODING_BASE } from "./shared";
 
 export async function geocodeCity(city: string): Promise<GeocodingResult> {
   const cacheKey = `geo_${city.toLowerCase().trim()}`;
-  const cached = cache.get(cacheKey) as GeocodingResult | undefined;
+  const cached = await cache.get(cacheKey) as GeocodingResult | undefined;
   if (cached) return cached;
 
   const data = await apiClient<GeocodingResponse>(GEOCODING_BASE, "/search", {
