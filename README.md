@@ -116,11 +116,8 @@ Wind-Wave Relationship: Unlike other activities, Surfing looks for a mid-range w
 The Indoor score is designed to be the Inverse of the Outdoor score: The "Motivation" Rule: If hasPrecipitation is true, Indoor Sightseeing gets $+35$. The logic assumes users want to be inside specifically because they can't be outside. The "Travel Safety" Exception: Even though rain makes you want to go to a museum, a Thunderstorm or Heavy Snow applies a penalty ($-20$) because the backend assumes the user cannot safely travel to the venue.
 
 
-
-
-
 ## Key Application Features
 
-**Smart Caching:** To prevent the API from hitting rate limits during testing and to make the UI feel "instant." I built a custom cache that stores weather results in memory. It rounds coordinates to keep searches consistent and automatically clears itself at midnight so the data stays fresh for the new day.
+**Client-First Caching:** Apollo Client uses `fetchPolicy: "cache-first"` to instantly serve repeated queries from the session cache, eliminating redundant API calls. The backend makes direct API calls with no server-side caching layer, keeping the architecture simple and removing external dependencies like Redis.
 
 **Mobile Responsive:** The UI responds to a device width of 660px and lower.
