@@ -1,3 +1,5 @@
+// Keeping this file as a reference for the previous in-memory caching implementation.
+
 // import NodeCache from "node-cache";
 // import { 
 //   GeocodingResponse, 

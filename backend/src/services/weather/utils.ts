@@ -1,4 +1,3 @@
-
 // Pure helper functions
 
 export function getSecondsUntilMidnight(): number {

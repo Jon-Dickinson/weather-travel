@@ -1,35 +1,3 @@
-import NodeCache from "node-cache";
-import Redis from "ioredis";
-
-// Define a common interface for our cache implementation
-export interface CacheStore {
-  get: (key: string) => Promise<any>;
-  set: (key: string, value: any, ttl?: number) => Promise<boolean | string | void>;
-}
-
-// Factory function to select the store based on environment
-function createCacheStore(): CacheStore {
-  if (process.env.USE_REDIS === "true") {
-    console.log("[Cache] Initializing Redis provider");
-    const redis = new Redis(process.env.REDIS_URL || "redis://localhost:6379");
-    return {
-      get: async (key: string) => JSON.parse(await redis.get(key) || "null"),
-      set: async (key: string, value: any, ttl?: number) => 
-        await redis.set(key, JSON.stringify(value), "EX", ttl || 3600),
-    };
-  }
-
-  console.log("[Cache] Initializing in-memory node-cache provider");
-  const localCache = new NodeCache({ stdTTL: 3600, checkperiod: 600 });
-  return {
-    get: async (key: string) => localCache.get(key) ?? null,
-    set: async (key: string, value: any, ttl?: number) => {
-      return localCache.set(key, value, ttl || 3600);
-    },
-  };
-}
-
-export const cache = createCacheStore();
 export const GEOCODING_BASE = "https://geocoding-api.open-meteo.com/v1";
 export const FORECAST_BASE = "https://api.open-meteo.com/v1";
 
