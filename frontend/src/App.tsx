@@ -1,10 +1,12 @@
 import styled from "@emotion/styled";
 import { Global } from "@emotion/react";
-import { ApolloProvider } from "@apollo/client";
+import { useState } from "react";
+import { ApolloProvider, useLazyQuery } from "@apollo/client";
 import { apolloClient } from "./graphql/client";
 import { SearchBar } from "./components/SearchBar";
 import { ForecastView } from "./components/ForecastView";
-import { useForecast } from "./hooks/useForecast";
+import { FORECAST_RANKING_QUERY } from "./graphql/queries";
+import { LocationForecast } from "./types";
 import { theme } from "./theme";
 
 const GlobalStyles = `
@@ -213,7 +215,16 @@ const EmptyActivities = styled.div`
 `;
 
 function AppInner() {
-  const { forecast, loading, error, search } = useForecast();
+  const [runQuery, { data, loading, error }] = useLazyQuery<{ forecastRanking: LocationForecast }>(
+    FORECAST_RANKING_QUERY,
+    { fetchPolicy: "cache-first" }
+  );
+
+  const search = (city: string) => {
+    runQuery({ variables: { city } });
+  };
+
+  const forecast = data?.forecastRanking ?? null;
 
   return (
     <App_>
@@ -232,7 +243,7 @@ function AppInner() {
           <SearchBar onSearch={search} loading={loading} />
           {error && (
             <ErrorBanner role="alert">
-              <span>⚠</span> {error}
+              <span>⚠</span> {error.message}
             </ErrorBanner>
           )}
         </SearchSection>
