@@ -1,3 +1,6 @@
+// GraphQL Schema
+// Defines the response format
+
 export const typeDefs = `#graphql
   enum ActivityType {
     SKIING
@@ -6,11 +9,12 @@ export const typeDefs = `#graphql
     INDOOR_SIGHTSEEING
   }
 
-  type ActivityScore {
-    activity: ActivityType!
-    score: Int!        # 0-100
-    label: String!     # Excellent | Good | Fair | Poor
-    reasoning: String!
+  type LocationForecast {
+    city: String!
+    country: String!
+    latitude: Float!
+    longitude: Float!
+    days: [DayRanking!]!
   }
 
   type DayRanking {
@@ -19,12 +23,11 @@ export const typeDefs = `#graphql
     summary: String!
   }
 
-  type LocationForecast {
-    city: String!
-    country: String!
-    latitude: Float!
-    longitude: Float!
-    days: [DayRanking!]!
+  type ActivityScore {
+    activity: ActivityType!
+    score: Int!        # 0-100
+    label: String!     # Excellent | Good | Fair | Poor
+    reasoning: String!
   }
 
   type Query {

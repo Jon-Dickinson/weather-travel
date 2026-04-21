@@ -9,7 +9,9 @@ export async function geocodeCity(city: string): Promise<GeocodingResult> {
     format: "json",
   });
 
-  if (!data.results?.length) throw new Error(`City not found: "${city}"`);
+  if (!data.results || data.results.length === 0) {
+    throw new Error(`City not found: "${city}"`);
+  }
   
   return data.results[0];
 }

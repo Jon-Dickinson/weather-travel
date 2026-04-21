@@ -4,17 +4,23 @@ import { OpenMeteoForecastResponse, DailyWeatherSnapshot } from "../../types/dom
 
 export function normaliseDailyForecast(raw: OpenMeteoForecastResponse): DailyWeatherSnapshot[] {
   const { daily } = raw;
-  return daily.time.map((date, i) => ({
+  
+  const normalized = daily.time.map((date, dayIndex) => ({
     date,
-    tempMax: daily.temperature_2m_max[i],
-    tempMin: daily.temperature_2m_min[i],
-    precipitation: daily.precipitation_sum[i],
-    snowfall: daily.snowfall_sum[i],
-    windSpeed: daily.wind_speed_10m_max[i],
-    windGusts: daily.wind_gusts_10m_max[i],
-    weatherCode: daily.weather_code[i],
-    sunshineDuration: daily.sunshine_duration[i],
-    precipitationHours: daily.precipitation_hours[i],
-    uvIndexMax: daily.uv_index_max[i],
+    tempMax: daily.temperature_2m_max[dayIndex],
+    tempMin: daily.temperature_2m_min[dayIndex],
+    precipitation: daily.precipitation_sum[dayIndex],
+    snowfall: daily.snowfall_sum[dayIndex],
+    windSpeed: daily.wind_speed_10m_max[dayIndex],
+    windGusts: daily.wind_gusts_10m_max[dayIndex],
+    weatherCode: daily.weather_code[dayIndex],
+    sunshineDuration: daily.sunshine_duration[dayIndex],
+    precipitationHours: daily.precipitation_hours[dayIndex],
+    uvIndexMax: daily.uv_index_max[dayIndex],
   }));
+
+  // LOG 2: Data converted to the internal Domain Type
+  // console.log(`[Stage 2: Normalized Data] Count: ${normalized.length} days`, normalized[0]);
+  
+  return normalized;
 }

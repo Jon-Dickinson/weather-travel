@@ -1,9 +1,47 @@
 import styled from "@emotion/styled";
-import { LocationForecast } from "../types";
+import { ForcastProps } from "../types";
 import { DayCard } from "./DayCard";
 import { theme } from "../theme";
 
-const ForecastViewContainer = styled.div``;
+// [2] The Container
+
+export function ForecastView({ forecast }: ForcastProps) {
+  const today = new Date().toISOString().split("T")[0];
+
+  return (
+    <ForecastViewContainer>
+      <ForecastHeader>
+        <ForecastCity>
+          {forecast.city}
+          <ForecastCountry>{forecast.country}</ForecastCountry>
+        </ForecastCity>
+        <ForecastSubtitle>7-day activity ranking</ForecastSubtitle>
+      </ForecastHeader>
+
+      {/* Child -> DayCard */}
+
+      <DaysList>
+        {forecast.days.map((day, i) => (
+          <DayCard
+            key={day.date}
+            day={day}
+            index={i}
+            isToday={day.date === today}
+          />
+        ))}
+      </DaysList> 
+    </ForecastViewContainer>
+  );
+}
+
+const ForecastViewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  border: 1px solid ${theme.colors.border};
+  border-radius: 8px;
+  background-color: #ffffff;
+`;
 
 const ForecastHeader = styled.div`
   margin-bottom: 24px;
@@ -40,34 +78,3 @@ const DaysList = styled.div`
   flex-direction: column;
   gap: 8px;
 `;
-
-interface Props {
-  forecast: LocationForecast;
-}
-
-export function ForecastView({ forecast }: Props) {
-  const today = new Date().toISOString().split("T")[0];
-
-  return (
-    <ForecastViewContainer>
-      <ForecastHeader>
-        <ForecastCity>
-          {forecast.city}
-          <ForecastCountry>{forecast.country}</ForecastCountry>
-        </ForecastCity>
-        <ForecastSubtitle>7-day activity ranking</ForecastSubtitle>
-      </ForecastHeader>
-
-      <DaysList>
-        {forecast.days.map((day, i) => (
-          <DayCard
-            key={day.date}
-            day={day}
-            index={i}
-            isToday={day.date === today}
-          />
-        ))}
-      </DaysList> 
-    </ForecastViewContainer>
-  );
-}

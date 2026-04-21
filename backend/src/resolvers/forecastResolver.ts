@@ -9,6 +9,7 @@ export const resolvers = {
       { city }: { city: string }
     ): Promise<LocationForecast> => {
       try {
+
         // Step 1: Get coordinates from city name
         const location = await geocodeCity(city);
 
@@ -22,14 +23,20 @@ export const resolvers = {
           summary: summariseDay(day),
         }));
 
-        // Step 4: Return exactly what the GraphQL schema expects
-        return {
+        // Step 4: Construct the final result
+        const finalResult: LocationForecast = {
           city: location.name,
           country: location.country,
           latitude: location.latitude,
           longitude: location.longitude,
           days,
         };
+
+        // LOG 3: Data as it leaves the server
+        // console.log(`[Stage 3: GraphQL Resolver Output] for ${city}:`, JSON.stringify(finalResult, null, 2));
+
+        return finalResult;
+
       } catch (error) {
         console.error(`[ForecastResolver] Error fetching data for ${city}:`, error);
         throw new Error(error instanceof Error ? error.message : "Internal Server Error");

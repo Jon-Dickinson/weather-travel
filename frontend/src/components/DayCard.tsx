@@ -1,9 +1,65 @@
 import { useState } from "react";
 import styled from "@emotion/styled";
-import { DayRanking } from "../types";
+import { DayCardProps } from "../types";
 import { ActivityBar } from "./ActivityBar";
 import { formatDate, scoreBg, scoreColor } from "../utils/activityMeta";
 import { theme } from "../theme";
+
+// [3] The Organizer
+
+export function DayCard({ day, index, isToday }: DayCardProps) {
+  const [expanded, setExpanded] = useState(index === 0);
+  const { weekday, date } = formatDate(day.date);
+  const topActivity = day.activities?.[0];
+  const topColor = topActivity ? scoreColor(topActivity.score) : theme.colors.border;
+  const topBg    = topActivity ? scoreBg(topActivity.score)    : theme.colors.border;
+
+  return (
+    <DayCardContainer
+      isExpanded={expanded}
+      isToday={isToday}
+      style={{ "--animation-delay": `${index * 80}ms` } as React.CSSProperties}
+    >
+      <DayCardHeader
+        onClick={() => setExpanded((v) => !v)}
+        aria-expanded={expanded}
+      >
+        <DayHeaderLeft>
+          <DayLabel>
+            <DayWeekday>{isToday ? "Today" : weekday}</DayWeekday>
+            <DayDate>{date}</DayDate>
+          </DayLabel>
+          {!expanded && (
+            <DayTopBadge color={topColor} bg={topBg}>
+              <span>{topActivity ? `${topActivity.score}` : "—"}</span>
+              <DayTopActivity>
+                {topActivity?.activity.replace(/_/g, " ").toLowerCase()}
+              </DayTopActivity>
+            </DayTopBadge>
+          )}
+        </DayHeaderLeft>
+        <DayHeaderRight>
+          <DaySummaryPreview title={day.summary}>
+            {day.summary}
+          </DaySummaryPreview>
+          <DayChevron>{expanded ? "▲" : "▼"}</DayChevron>
+        </DayHeaderRight>
+      </DayCardHeader>
+
+      {/* Child -> ActivityBar */}
+
+      {expanded && (
+        <DayCardBody>
+          <ActivitiesList>
+            {day.activities.map((a, i) => (
+              <ActivityBar key={a.activity} activityScore={a} rank={i} />
+            ))}
+          </ActivitiesList>
+        </DayCardBody>
+      )}
+    </DayCardContainer>
+  );
+}
 
 const DayCardContainer = styled.div<{ isExpanded: boolean; isToday: boolean }>`
   background: ${theme.colors.surface};
@@ -28,14 +84,12 @@ const DayCardContainer = styled.div<{ isExpanded: boolean; isToday: boolean }>`
     props.isToday &&
     `
     border-color: ${theme.colors.accent};
-    box-shadow: 0 0 0 2px ${theme.colors.accentLight};
   `};
 
   ${(props) =>
     props.isExpanded &&
     `
-    box-shadow: ${theme.shadow.md};
-    border-color: ${theme.colors.borderStrong};
+    border-color: ${theme.colors.active};
   `};
 `;
 
@@ -144,61 +198,3 @@ const ActivitiesList = styled.div`
   flex-direction: column;
   gap: 8px;
 `;
-
-interface Props {
-  day: DayRanking;
-  index: number;
-  isToday: boolean;
-}
-
-export function DayCard({ day, index, isToday }: Props) {
-  const [expanded, setExpanded] = useState(index === 0);
-  const { weekday, date } = formatDate(day.date);
-  const topActivity = day.activities?.[0];
-  const topColor = topActivity ? scoreColor(topActivity.score) : theme.colors.border;
-  const topBg    = topActivity ? scoreBg(topActivity.score)    : theme.colors.border;
-
-  return (
-    <DayCardContainer
-      isExpanded={expanded}
-      isToday={isToday}
-      style={{ "--animation-delay": `${index * 80}ms` } as React.CSSProperties}
-    >
-      <DayCardHeader
-        onClick={() => setExpanded((v) => !v)}
-        aria-expanded={expanded}
-      >
-        <DayHeaderLeft>
-          <DayLabel>
-            <DayWeekday>{isToday ? "Today" : weekday}</DayWeekday>
-            <DayDate>{date}</DayDate>
-          </DayLabel>
-          {!expanded && (
-            <DayTopBadge color={topColor} bg={topBg}>
-              <span>{topActivity ? `${topActivity.score}` : "—"}</span>
-              <DayTopActivity>
-                {topActivity?.activity.replace(/_/g, " ").toLowerCase()}
-              </DayTopActivity>
-            </DayTopBadge>
-          )}
-        </DayHeaderLeft>
-        <DayHeaderRight>
-          <DaySummaryPreview title={day.summary}>
-            {day.summary}
-          </DaySummaryPreview>
-          <DayChevron>{expanded ? "▲" : "▼"}</DayChevron>
-        </DayHeaderRight>
-      </DayCardHeader>
-
-      {expanded && (
-        <DayCardBody>
-          <ActivitiesList>
-            {day.activities.map((a, i) => (
-              <ActivityBar key={a.activity} activityScore={a} rank={i} />
-            ))}
-          </ActivitiesList>
-        </DayCardBody>
-      )}
-    </DayCardContainer>
-  );
-}

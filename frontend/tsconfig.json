@@ -1,19 +1,21 @@
+// primary configuration for the Frontend App
+
 {
   "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx",
-    "jsxImportSource": "@emotion/react",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "target": "ES2020",                         // Target modern JavaScript features supported by current browsers
+    "module": "ESNext",                         // Use ESNext module system for modern bundlers
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],   // Include necessary libraries for browser and modern JavaScript features
+    "jsx": "react-jsx",                         // Use the new JSX transform for React 17+
+    "jsxImportSource": "@emotion/react",        // Use Emotion's JSX factory for styling
+    "outDir": "./dist",                         // Output directory for compiled files
+    "rootDir": "./src",                         // Root directory of source files    
+    "strict": true,                             // Enable all strict type-checking options
+    "esModuleInterop": true,                    // Enable interoperability between CommonJS and ES Modules
+    "skipLibCheck": true,                       // Skip type checking of declaration files for faster builds
+    "forceConsistentCasingInFileNames": true,   // Ensure consistent casing in file names
+    "resolveJsonModule": true,                  // Allow importing JSON files as modules
+    "moduleResolution": "bundler",              // Use bundler module resolution for better compatibility with modern tools
+    "allowSyntheticDefaultImports": true        // Allow default imports from modules with no default export
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]

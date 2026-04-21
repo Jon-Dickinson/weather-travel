@@ -1,6 +1,43 @@
 import { useState, type FormEvent } from "react";
 import styled from "@emotion/styled";
 import { theme } from "../theme";
+import { type useForcastProps } from "../types";
+
+// [1] The Entry Point
+
+export function SearchBar({ onSearch, loading }: useForcastProps) {
+  // manages it's own local state (value) for the input value
+  const [value, setValue] = useState("");
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault();
+    const trimmed = value.trim();
+    // a callback function (onSearch) is made when form is (handleSubmit) 
+    if (trimmed) onSearch(trimmed);
+  }
+
+  return (
+    <SearchForm onSubmit={handleSubmit}>
+      <SearchInputWrapper>
+       
+        <SearchInput
+          type="text"
+          placeholder="Enter a city or town…"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          disabled={loading}
+          autoFocus
+        />
+        <SearchButton type="submit" disabled={loading || !value.trim()}>
+
+           {/* Displays a Spinner and disables button to prevent duplicate searches */}
+
+          {loading ? <Spinner /> : "Explore"}
+        </SearchButton>
+      </SearchInputWrapper>
+    </SearchForm>
+  );
+}
 
 const SearchForm = styled.form`
   display: inline-flex;
@@ -90,37 +127,3 @@ const Spinner = styled.span`
     }
   }
 `;
-
-interface Props {
-  onSearch: (city: string) => void;
-  loading: boolean;
-}
-
-export function SearchBar({ onSearch, loading }: Props) {
-  const [value, setValue] = useState("");
-
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const trimmed = value.trim();
-    if (trimmed) onSearch(trimmed);
-  }
-
-  return (
-    <SearchForm onSubmit={handleSubmit}>
-      <SearchInputWrapper>
-       
-        <SearchInput
-          type="text"
-          placeholder="Enter a city or town…"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          disabled={loading}
-          autoFocus
-        />
-        <SearchButton type="submit" disabled={loading || !value.trim()}>
-          {loading ? <Spinner /> : "Explore"}
-        </SearchButton>
-      </SearchInputWrapper>
-    </SearchForm>
-  );
-}

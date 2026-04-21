@@ -1,7 +1,36 @@
 import styled from "@emotion/styled";
-import { ActivityScore } from "../types";
+import { ActivityBarProps } from "../types";
 import { ACTIVITY_META, scoreColor, scoreBg } from "../utils/activityMeta";
 import { theme } from "../theme";
+
+// [4] The Detail
+
+export function ActivityBar({ activityScore, rank }: ActivityBarProps) {
+  const { activity, score, label, reasoning } = activityScore;
+  const meta = ACTIVITY_META[activity];
+  const color = scoreColor(score);
+  const bg = scoreBg(score);
+
+  return (
+    <ActivityRow
+      style={{ "--animation-delay": `${rank * 60}ms` } as React.CSSProperties}
+    >
+      <ActivityRank>{rank + 1}</ActivityRank>
+      <ActivityIcon>{meta.icon}</ActivityIcon>
+      <ActivityInfo>
+        <ActivityName>{meta.label}</ActivityName>
+        <ActivityReasoning>{reasoning}</ActivityReasoning>
+      </ActivityInfo>
+      <ActivityScoreBlock color={color} bg={bg}>
+        <ActivityScoreNumber>{score}</ActivityScoreNumber>
+        <ActivityScoreLabel>{label}</ActivityScoreLabel>
+      </ActivityScoreBlock>
+      <ActivityBarTrack>
+        <ActivityBarFill width={score} color={color} />
+      </ActivityBarTrack>
+    </ActivityRow>
+  );
+}
 
 const ActivityRow = styled.div`
   display: flex;
@@ -117,35 +146,3 @@ const ActivityBarFill = styled.div<{ width: number; color: string }>`
   background: ${(props) => props.color};
   transition: width 0.4s ease;
 `;
-
-interface Props {
-  activityScore: ActivityScore;
-  rank: number;
-}
-
-export function ActivityBar({ activityScore, rank }: Props) {
-  const { activity, score, label, reasoning } = activityScore;
-  const meta = ACTIVITY_META[activity];
-  const color = scoreColor(score);
-  const bg = scoreBg(score);
-
-  return (
-    <ActivityRow
-      style={{ "--animation-delay": `${rank * 60}ms` } as React.CSSProperties}
-    >
-      <ActivityRank>{rank + 1}</ActivityRank>
-      <ActivityIcon>{meta.icon}</ActivityIcon>
-      <ActivityInfo>
-        <ActivityName>{meta.label}</ActivityName>
-        <ActivityReasoning>{reasoning}</ActivityReasoning>
-      </ActivityInfo>
-      <ActivityScoreBlock color={color} bg={bg}>
-        <ActivityScoreNumber>{score}</ActivityScoreNumber>
-        <ActivityScoreLabel>{label}</ActivityScoreLabel>
-      </ActivityScoreBlock>
-      <ActivityBarTrack>
-        <ActivityBarFill width={score} color={color} />
-      </ActivityBarTrack>
-    </ActivityRow>
-  );
-}

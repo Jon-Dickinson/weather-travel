@@ -1,6 +1,6 @@
+import { useEffect } from "react";
 import styled from "@emotion/styled";
 import { Global } from "@emotion/react";
-import { useState } from "react";
 import { ApolloProvider, useLazyQuery } from "@apollo/client";
 import { apolloClient } from "./graphql/client";
 import { SearchBar } from "./components/SearchBar";
@@ -8,6 +8,112 @@ import { ForecastView } from "./components/ForecastView";
 import { FORECAST_RANKING_QUERY } from "./graphql/queries";
 import { LocationForecast } from "./types";
 import { theme } from "./theme";
+
+
+/**
+ * Main application logic and state management.
+ * AppInner is separated to utilize hooks within the ApolloProvider context.
+ */
+function AppInner() {
+  // useLazyQuery allows us to trigger the API call manually (on search) 
+ 
+  const [runQuery, { data, loading, error }] = useLazyQuery<{ forecastRanking: LocationForecast }>(
+    FORECAST_RANKING_QUERY,
+    { fetchPolicy: "cache-first" } // Prioritize Apollo cache to reduce unnecessary network requests
+  );
+
+  useEffect(() => {
+    if (data) {
+      // LOG 4: Data as seen by the UI components
+      // console.log("[Stage 4: Front End Received]", data.forecastRanking);
+    }
+  }, [data]);
+
+  /**
+   * Triggers the GraphQL query with the user-provided city string.
+   */
+  const search = (city: string) => {
+    runQuery({ variables: { city } });
+  };
+
+  // Safe access to the nested forecast data, defaulting to null if not yet loaded.
+  const forecast = data?.forecastRanking ?? null;
+
+ 
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <LoadingState>
+          <LoadingOrb />
+          <p>Fetching forecast…</p>
+        </LoadingState>
+      );
+    }
+
+    if (forecast) {
+      return <ForecastView forecast={forecast} />;
+    }
+
+    // Only show the landing/empty state if there isn't an active error.
+    if (!error) {
+      return (
+        <EmptyState>
+          <EmptyActivities>
+            {['⛷️', '🏄', '🏛️', '🖼️'].map((emoji) => (
+              <span key={emoji}>{emoji}</span>
+            ))}
+          </EmptyActivities>
+          <p>Enter any city to see a 7-day activity forecast</p>
+        </EmptyState>
+      );
+    }
+    return null; 
+  };
+
+  return (
+    <App_>
+      <AppHeader>
+        <HeaderInner>
+          <Brand>
+            <BrandMark>☈</BrandMark>
+            <BrandName>TravelCast</BrandName>
+          </Brand>
+          <BrandTagline>data from open-meteo.com</BrandTagline>
+        </HeaderInner>
+      </AppHeader>
+
+      <AppMain>
+        <SearchSection>
+          {/* SearchBar handles local input state and emits the value via onSearch */}
+          <SearchBar onSearch={search} loading={loading} />
+          
+          {/* Conditional Error UI: Only renders if the Apollo query fails */}
+          {error && (
+            <ErrorBanner role="alert">
+              <span>⚠</span> {error.message}
+            </ErrorBanner>
+          )}
+        </SearchSection>
+
+        {/* Search Results */}
+        {renderContent()}
+      </AppMain>
+    </App_>
+  );
+}
+
+/**
+ * Entry point: Wraps the application in the necessary providers for 
+ * Apollo (GraphQL) and Emotion/Global styles.
+ */
+export default function App() {
+  return (
+    <ApolloProvider client={apolloClient}>
+      <Global styles={GlobalStyles} />
+      <AppInner />
+    </ApolloProvider>
+  );
+}
 
 const GlobalStyles = `
   *, *:before, *:after {
@@ -213,71 +319,3 @@ const EmptyActivities = styled.div`
     font-size: 2rem;
   }
 `;
-
-function AppInner() {
-  const [runQuery, { data, loading, error }] = useLazyQuery<{ forecastRanking: LocationForecast }>(
-    FORECAST_RANKING_QUERY,
-    { fetchPolicy: "cache-first" }
-  );
-
-  const search = (city: string) => {
-    runQuery({ variables: { city } });
-  };
-
-  const forecast = data?.forecastRanking ?? null;
-
-  return (
-    <App_>
-      <AppHeader>
-        <HeaderInner>
-          <Brand>
-            <BrandMark>☈</BrandMark>
-            <BrandName>TravelCast</BrandName>
-          </Brand>
-          <BrandTagline>data from open-meteo.com</BrandTagline>
-        </HeaderInner>
-      </AppHeader>
-
-      <AppMain>
-        <SearchSection>
-          <SearchBar onSearch={search} loading={loading} />
-          {error && (
-            <ErrorBanner role="alert">
-              <span>⚠</span> {error.message}
-            </ErrorBanner>
-          )}
-        </SearchSection>
-
-        {loading && (
-          <LoadingState>
-            <LoadingOrb />
-            <p>Fetching forecast…</p>
-          </LoadingState>
-        )}
-
-        {!loading && forecast && <ForecastView forecast={forecast} />}
-
-        {!loading && !forecast && !error && (
-          <EmptyState>
-            <EmptyActivities>
-              <span>⛷️</span>
-              <span>🏄</span>
-              <span>🏛️</span>
-              <span>🖼️</span>
-            </EmptyActivities>
-            <p>Enter any city to see a 7-day activity forecast</p>
-          </EmptyState>
-        )}
-      </AppMain>
-    </App_>
-  );
-}
-
-export default function App() {
-  return (
-    <ApolloProvider client={apolloClient}>
-      <Global styles={GlobalStyles} />
-      <AppInner />
-    </ApolloProvider>
-  );
-}

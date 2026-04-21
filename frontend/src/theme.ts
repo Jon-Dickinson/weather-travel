@@ -15,6 +15,7 @@ export const theme = {
     accent: '#ff0022',
     accentHover: '#a8224f',
     accentLight: '#f9ece8',
+    active: '#0004ff',
 
     scoreExcellent: '#00964b',
     scoreExcellentBg: '#e8f5ee',

@@ -1,4 +1,4 @@
-// ─── External API Types
+// TypeScript Interfaces
 
 export interface GeocodingResult {
   id: number;
@@ -13,6 +13,8 @@ export interface GeocodingResult {
 export interface GeocodingResponse {
   results?: GeocodingResult[];
 }
+
+// All the weather variables extracted from Open-Meteo
 
 export interface OpenMeteoForecastResponse {
   latitude: number;

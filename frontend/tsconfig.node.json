@@ -1,10 +1,12 @@
+// configuration for the code that runs in Node.js (on client machine)
+
 {
   "compilerOptions": {
-    "composite": true,
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true
+    "composite": true,                      // Enable composite projects for better incremental builds
+    "skipLibCheck": true,                   // Skip type checking of declaration files for faster builds
+    "module": "ESNext",                     // Use ESNext for native ESM support in Vite
+    "moduleResolution": "bundler",          // Use 'bundler' for Vite compatibility
+    "allowSyntheticDefaultImports": true    // Allow default imports from modules with no default export
   },
   "include": ["vite.config.js"]
 }
